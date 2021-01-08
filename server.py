@@ -1,13 +1,15 @@
 import socket
 from _thread import *
 
-nbplayer = 0
+nbPlayer = 0
 running = True
 
 def threadClient(ip, port, socket):
+    global running
+    global nbPlayer
 
     print("Creating new thread for host %s %s" % (ip, port, ))
-
+    socket.send(str.encode("Hello Server"))
 
     while (True):
         try:
@@ -16,15 +18,23 @@ def threadClient(ip, port, socket):
                 print("null")
                 break
             print("Connection from : %s %s" % (ip, port, ))
+            print("Received : ", resp)
+            if resp == "game":
+                #running = True
+                data = str(nbPlayer)
+                data = str.encode(data)  
+                socket.send(data)
 
-            if(nbplayer >= 2) :
+            if(nbPlayer >= 4) :
                 running = True
                 data = "good"
                 socket.send(str.encode(data))
 
         except:
             break
+
     print("Lost connexion")
+    nbPlayer = nbPlayer - 1
     running = False
     socket.close()
 
@@ -39,11 +49,11 @@ if __name__ == "__main__":
         tcpsock.listen(10)
         print( "Listening")
         (socket, (ip, port)) = tcpsock.accept()
-        nbplayer = nbplayer + 1
+        nbPlayer = nbPlayer + 1
         print( "next")
 
 
-        if nbplayer < 2 :
+        if nbPlayer < 4 :
             print("Waiting for at least two players...")
         else:
             print("Enough player has joined, we can start :)")
