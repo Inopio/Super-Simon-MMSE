@@ -9,12 +9,17 @@ const int servo = 8;
 
 //sequence
 const int length = 10;
+//0 = ultrason, 1 = interrupteur, 2 = bouton poussoir, 3 = 
 int player[] = {0,1,2,3};
 int pos[] = {22,67,112,157};
 long dir[length];
 long order[length];
 int streak,ran,currpos,wait;
+int previous = -1;
 bool lost = false;
+bool played = true;
+bool closed = false;
+bool pressed = false;
 
 // initialisation, on définit les ports pour RS, E et D4 à D7
 LiquidCrystal lcd(12, 11, 4, 5, 6, 7);
@@ -53,14 +58,24 @@ void setup() {
   //bouton poussoir:
   buttonState = LOW;
   pinMode(bouton, INPUT);
+  
+  //capteur ultrason
+  pinMode(trigPin, OUTPUT);
+  digitalWrite(trigPin, LOW); 
+  pinMode(echoPin, INPUT);
+  
 
   //sequence
   streak = 0;
   randomSeed(analogRead(0));
   for (int i = 0; i < length; i+=1){
-    ran = random(4);
+    ran = random(1,3);
+    while(ran == previous){
+      ran = random(1,3);
+    }
     order[i] = ran;
     dir[i] = pos[ran];
+    previous = ran;
   }
 
 }
@@ -69,7 +84,12 @@ void setup() {
 void loop(){
 
   //Servo
-  if(!lost && streak < length){
+  if(!lost && streak < length && played){
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Current streak");
+  lcd.setCursor(0,1);
+  lcd.print(streak);
   for (int i = 0; i < streak+1; i+=1){
     if (currpos == dir[i]){
       wait = 10;
@@ -93,8 +113,17 @@ void loop(){
     Serial.print('\n');
     delay(500);
   }
-  streak++;
+  //streak++;
+  played = false;
   }
+  else if(lost){
+    lcd.clear();
+    lcd.print("Game lost");
+    lcd.setCursor(0,1);
+    lcd.print("Score ");
+    lcd.print(streak);
+  }
+  
   //fin servo
   
   // Ultrason
@@ -110,29 +139,55 @@ void loop(){
   //on affiche la distance
   Serial.print("distance = ");
   Serial.println(distance);
-  if(distance < 5){ //action
-     }
+//  if(distance < 5 && !played){ //action
+//    if (order[streak] == 0){
+//      streak ++;
+//    }
+//    else{
+//      lost = true;
+//    }
+//    played = true;
+//  }
+  
   //fin ultrason 
   
   //interrupteur
   digitalWrite(interrupt,HIGH);
   int state = digitalRead(interrupt);
-  if( state == 0)
-    Serial.println("Close");
-  else
-    Serial.println("Open");
+  if( state == 0 && !closed && !played){
+    //Serial.println("Close");
+    closed = true;
+    if (order[streak] == 1){
+      streak ++;
+    }
+    else{
+      lost = true;
+    }
+    played = true;
+  }
+  else if (state != 0){
+    //Serial.println("Open");
+    closed = false;
+  }
     
   //fin interrupteur
   
   // bouton poussoir
   buttonState = digitalRead(bouton);
   
-  if(buttonState == HIGH) // le bouton a un niveau HAUT
+  if(buttonState == HIGH && pressed) // le bouton a un niveau HAUT
     {
-       //action
+       pressed = false;
     }
-    else 
+    else if (!pressed)
     {
-        //action
+        if (order[streak] == 2){
+          streak ++;  
+        }
+        else{
+          lost = true;
+        }
+        pressed = true;
+        played = true;
     }
 }
