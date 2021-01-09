@@ -22,7 +22,15 @@ bool closed = false;
 bool pressed = false;
 
 // initialisation, on définit les ports pour RS, E et D4 à D7
-LiquidCrystal lcd(12, 11, 4, 5, 6, 7);
+const int RS=12; 
+const int E=11;
+
+const int D4=4; 
+const int D5=5; 
+const int D6=6; 
+const int D7=7;
+
+LiquidCrystal lcd(RS, E, D4, D5, D6, D7);
 
 //ultrason
 const int trigPin = 2;
