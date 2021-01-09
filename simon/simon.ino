@@ -14,11 +14,7 @@ int player[] = {0,1,2,3};
 int pos[] = {22,67,112,157};
 long dir[length];
 long order[length];
-<<<<<<< HEAD
 int streak,ran,currpos,wait,action;
-=======
-int streak,ran,currpos,wait;
->>>>>>> 682a301cec1ae3c69ab81c8ecdb5885f4772a042
 int previous = -1;
 bool lost = false;
 bool played = true;
@@ -78,15 +74,9 @@ void setup() {
   streak = 0;
   randomSeed(analogRead(0));
   for (int i = 0; i < length; i+=1){
-<<<<<<< HEAD
     ran = random(3);
     while(ran == previous){
       ran = random(3);
-=======
-    ran = random(1,3);
-    while(ran == previous){
-      ran = random(1,3);
->>>>>>> 682a301cec1ae3c69ab81c8ecdb5885f4772a042
     }
     order[i] = ran;
     dir[i] = pos[ran];
@@ -130,7 +120,6 @@ void loop(){
   }
   //streak++;
   played = false;
-<<<<<<< HEAD
   pressed = false;
   action = 0;
   }
@@ -141,16 +130,6 @@ void loop(){
     lcd.print("Score ");
     lcd.print(streak);
   }
-=======
-  }
-  else if(lost){
-    lcd.clear();
-    lcd.print("Game lost");
-    lcd.setCursor(0,1);
-    lcd.print("Score ");
-    lcd.print(streak);
-  }
->>>>>>> 682a301cec1ae3c69ab81c8ecdb5885f4772a042
   
   //fin servo
   
@@ -165,7 +144,6 @@ void loop(){
   float distance = measure*0.0340 / 2.0  ;
   
   //on affiche la distance
-<<<<<<< HEAD
   //Serial.print("distance = ");
   //Serial.println(distance);
   if(distance < 5 && !played){ //action
@@ -187,19 +165,6 @@ void loop(){
       Serial.println("lost ultrason");
     }
   }
-=======
-  Serial.print("distance = ");
-  Serial.println(distance);
-//  if(distance < 5 && !played){ //action
-//    if (order[streak] == 0){
-//      streak ++;
-//    }
-//    else{
-//      lost = true;
-//    }
-//    played = true;
-//  }
->>>>>>> 682a301cec1ae3c69ab81c8ecdb5885f4772a042
   
   //fin ultrason 
   
@@ -209,7 +174,6 @@ void loop(){
   if( state == 0 && !closed && !played){
     //Serial.println("Close");
     closed = true;
-<<<<<<< HEAD
     if (order[action] == 1){
       if(action == streak){
         streak ++;
@@ -227,15 +191,6 @@ void loop(){
       lost = true;
       Serial.println("lost interrupteur");
     }
-=======
-    if (order[streak] == 1){
-      streak ++;
-    }
-    else{
-      lost = true;
-    }
-    played = true;
->>>>>>> 682a301cec1ae3c69ab81c8ecdb5885f4772a042
   }
   else if (state != 0){
     //Serial.println("Open");
@@ -251,7 +206,6 @@ void loop(){
     {
        pressed = false;
     }
-<<<<<<< HEAD
     else if (!pressed && buttonState == LOW)
     {
         if (order[action] == 2){
@@ -272,17 +226,5 @@ void loop(){
           Serial.println("lost bouton");
         }
         pressed = true;
-=======
-    else if (!pressed)
-    {
-        if (order[streak] == 2){
-          streak ++;  
-        }
-        else{
-          lost = true;
-        }
-        pressed = true;
-        played = true;
->>>>>>> 682a301cec1ae3c69ab81c8ecdb5885f4772a042
     }
 }
