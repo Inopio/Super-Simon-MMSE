@@ -9,7 +9,7 @@ const int servo = 8;
 
 //sequence
 const int length = 10;
-//0 = ultrason, 1 = interrupteur, 2 = bouton poussoir, 3 = 
+//0 = ultrason, 1 = interrupteur, 2 = bouton poussoir, 3 = capteur de lumière
 int player[] = {0,1,2,3};
 int pos[] = {22,67,112,157};
 long dir[length];
@@ -35,6 +35,10 @@ const int interrupt = 9;
 //bouton
 int buttonState;
 const int bouton = 10;
+
+//lumière
+int photocellPin = 0;
+int photocellReading;
 
 void setup() {
   Serial.begin(9600);
@@ -74,9 +78,9 @@ void setup() {
   streak = 0;
   randomSeed(analogRead(0));
   for (int i = 0; i < length; i+=1){
-    ran = random(3);
+      ran = random(4);
     while(ran == previous){
-      ran = random(3);
+      ran = random(4);
     }
     order[i] = ran;
     dir[i] = pos[ran];
@@ -89,7 +93,7 @@ void setup() {
 void loop(){
 
   //Servo
-  if(!lost && streak < length && played){
+  if(!lost && streak <= length && played){
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Current streak");
@@ -153,11 +157,13 @@ void loop(){
         Serial.println("Performed :");
         Serial.println(0);
         played = true;
+        delay(500);
       }
       else{
         action ++;
         Serial.println("Performed :");
         Serial.println(0);
+        delay(500);
       }
     }
     else{
@@ -226,4 +232,29 @@ void loop(){
         }
         pressed = true;
     }
+  //fin bouton poussoir
+
+  //capteur de lumière
+  photocellReading = analogRead(photocellPin);   
+  if (photocellReading < 300) {
+    if (order[action] == 3){
+      if(action == streak){
+        streak ++;
+        Serial.println("Performed :");
+        Serial.println(3);
+        played = true;
+        delay(500);
+      }
+      else{
+        action ++;
+        Serial.println("Performed :");
+        Serial.println(3);
+        delay(500);
+      }
+    }
+        else{
+          lost = true;
+          Serial.println("lost lumière");
+        }
+  }
 }
