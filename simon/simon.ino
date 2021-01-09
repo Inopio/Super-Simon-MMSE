@@ -58,11 +58,11 @@ void setup() {
   pinMode(echoPin,INPUT);
   
   //interrupteur
-   pinMode(interrupt, INPUT);
+  pinMode(interrupt, INPUT);
    
   //bouton poussoir:
   buttonState = LOW;
-  pinMode(bouton, INPUT);
+  pinMode(bouton, INPUT_PULLUP);
   
   //capteur ultrason
   pinMode(trigPin, OUTPUT);
@@ -202,12 +202,11 @@ void loop(){
   // bouton poussoir
   buttonState = digitalRead(bouton);
   
-  if(buttonState == HIGH && pressed) // le bouton a un niveau HAUT
+  if(buttonState == LOW && pressed) // le bouton a un niveau HAUT
     {
        pressed = false;
     }
-    else if (!pressed && buttonState == LOW)
-    {
+    else if (!pressed && buttonState == HIGH) {
         if (order[action] == 2){
       if(action == streak){
         streak ++;
