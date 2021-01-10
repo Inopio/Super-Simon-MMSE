@@ -20,6 +20,7 @@ bool lost = false;
 bool played = true;
 bool closed = false;
 bool pressed = false;
+bool waiting = true;
 
 // initialisation, on définit les ports pour RS, E et D4 à D7
 const int RS=12; 
@@ -126,14 +127,15 @@ void loop(){
       }
     }
     currpos = dir[i];
-    Serial.print(order[i]);
-    Serial.print('\n');
+    //Serial.print(order[i]);
+    //Serial.print('\n');
     delay(500);
   }
   //streak++;
   played = false;
   pressed = false;
   action = 0;
+  //waiting = true;
   }
   else if(lost){
     lcd.clear();
@@ -141,7 +143,12 @@ void loop(){
     lcd.setCursor(0,1);
     lcd.print("Score ");
     lcd.print(streak);
+    Serial.println(lost);
   }
+//  else if(!waiting){
+//    Serial.println(waiting);
+//    waiting = true;
+//  }
   
   //fin servo
   
@@ -162,21 +169,22 @@ void loop(){
     if (order[action] == 0){
       if(action == streak){
         streak ++;
-        Serial.println("Performed :");
-        Serial.println(0);
+        //Serial.println("Performed :");
+        //Serial.println(0);
         played = true;
         delay(500);
       }
       else{
         action ++;
-        Serial.println("Performed :");
-        Serial.println(0);
+        //Serial.println("Performed :");
+        //Serial.println(0);
         delay(500);
       }
+      //waiting = false;
     }
     else{
       lost = true;
-      Serial.println("lost ultrason");
+      //Serial.println(lost);
     }
   }
   
@@ -191,19 +199,20 @@ void loop(){
     if (order[action] == 1){
       if(action == streak){
         streak ++;
-        Serial.println("Performed :");
-        Serial.println(1);
+        //Serial.println("Performed :");
+        //Serial.println(1);
         played = true;
       }
       else{
         action ++;
-        Serial.println("Performed :");
-        Serial.println(1);
+        //Serial.println("Performed :");
+        //Serial.println(1);
       }
+      //waiting = false;
     }
     else{
       lost = true;
-      Serial.println("lost interrupteur");
+      //Serial.println("lost interrupteur");
     }
   }
   else if (state != 0){
@@ -224,19 +233,20 @@ void loop(){
         if (order[action] == 2){
       if(action == streak){
         streak ++;
-        Serial.println("Performed :");
-        Serial.println(2);
+        //Serial.println("Performed :");
+        //Serial.println(2);
         played = true;
       }
       else{
         action ++;
-        Serial.println("Performed :");
-        Serial.println(2);
+        //Serial.println("Performed :");
+        //Serial.println(2);
       }
+      //waiting = false;
     }
         else{
           lost = true;
-          Serial.println("lost bouton");
+          //Serial.println(lost);
         }
         pressed = true;
     }
@@ -248,21 +258,22 @@ void loop(){
     if (order[action] == 3){
       if(action == streak){
         streak ++;
-        Serial.println("Performed :");
-        Serial.println(3);
+        //Serial.println("Performed :");
+        //Serial.println(3);
         played = true;
         delay(500);
       }
       else{
         action ++;
-        Serial.println("Performed :");
-        Serial.println(3);
+        //Serial.println("Performed :");
+        //Serial.println(3);
         delay(500);
       }
+      //waiting = false;
     }
         else{
           lost = true;
-          Serial.println("lost lumière");
+          //Serial.println(lost);
         }
   }
 }
