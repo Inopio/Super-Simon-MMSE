@@ -22,9 +22,10 @@ rect = True
 player_list= ["Player 1","Player 2","Player 3","Player 4"]
 player_color_list = [RED,YELLOW,GREEN,BLUE]
 
+'''
 for i in range (0,4):
     player_number = player_list[i]
-    player_color = player_color_list[i]
+    player_color = player_color_list[i]'''
     
 
 myfont = pygame.font.SysFont("Comic Sans MS", 30) 
