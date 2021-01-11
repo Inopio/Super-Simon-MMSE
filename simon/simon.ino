@@ -1,26 +1,38 @@
 #include <LiquidCrystal.h>
 #include <Servo.h>
 
-boolean correctAction;
+//temps
+const unsigned long eventInterval = 10000;
+unsigned long previousTime = 0;
+unsigned long currentTime = millis();
 
 //servomoteur
 Servo myservo;
 const int servo = 8;
 
 //sequence
+//////////////////////
 const int length = 10;
+
 //0 = ultrason, 1 = interrupteur, 2 = bouton poussoir, 3 = capteur de lumière
 int player[] = {0,1,2,3};
+
+//positions sur le demi cadran
 int pos[] = {22,67,112,157};
+
+//liste des directions
 long dir[length];
+
+//ordre des joueurs correspondants
 long order[length];
+
 int streak,ran,currpos,wait,action;
 int previous = -1;
 bool lost = false;
 bool played = true;
 bool closed = false;
 bool pressed = false;
-bool waiting = true;
+//////////////////////
 
 // initialisation, on définit les ports pour RS, E et D4 à D7
 const int RS=12; 
@@ -51,8 +63,6 @@ int photocellReading;
 
 void setup() {
   Serial.begin(9600);
-
-  correctAction = false; //est à vrai quand la bonne action est effectuée
   //servo
   myservo.attach(servo);// attache le servomoteur au pin spécifié 
   pinMode(9, INPUT_PULLUP); //pour éviter de passer successivement à tous les états
@@ -84,10 +94,12 @@ void setup() {
   
 
   //sequence
+  //on génère une suite aléatoire de mouvements
   streak = 0;
   randomSeed(analogRead(0));
   for (int i = 0; i < length; i+=1){
-      ran = random(4);
+    ran = random(4);
+    //on s'assure de ne pas avoir deux fois de suite la même action
     while(ran == previous){
       ran = random(4);
     }
@@ -102,12 +114,15 @@ void setup() {
 void loop(){
 
   //Servo
+  //Si on n'a pas perdu ou fini la séquence complète et que le tour précédent est terminé
   if(!lost && streak <= length && played){
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Current streak");
   lcd.setCursor(0,1);
   lcd.print(streak);
+  
+  //on pointe les différentes actions à effectuer pendant le tour
   for (int i = 0; i < streak+1; i+=1){
     if (currpos == dir[i]){
       wait = 10;
@@ -135,7 +150,10 @@ void loop(){
   played = false;
   pressed = false;
   action = 0;
-  //waiting = true;
+  
+  //on initialise le compteur de temps
+  previousTime = currentTime;
+  currentTime = millis();
   }
   else if(lost){
     lcd.clear();
@@ -144,12 +162,7 @@ void loop(){
     lcd.print("Score ");
     lcd.print(streak);
     Serial.println(lost);
-  }
-//  else if(!waiting){
-//    Serial.println(waiting);
-//    waiting = true;
-//  }
-  
+  }  
   //fin servo
   
   // Ultrason
@@ -179,12 +192,17 @@ void loop(){
         //Serial.println("Performed :");
         //Serial.println(0);
         delay(500);
+        lcd.clear();
+        lcd.print("Last action :");
+        lcd.setCursor(0,1);
+        lcd.print("Ultrasound");
       }
-      //waiting = false;
+      previousTime = currentTime;
+      currentTime = millis();
     }
     else{
       lost = true;
-      //Serial.println(lost);
+      //Serial.println("lost ultrason");
     }
   }
   
@@ -207,8 +225,13 @@ void loop(){
         action ++;
         //Serial.println("Performed :");
         //Serial.println(1);
+        lcd.clear();
+        lcd.print("Last action :");
+        lcd.setCursor(0,1);
+        lcd.print("Switch");
       }
-      //waiting = false;
+      previousTime = currentTime;
+      currentTime = millis();
     }
     else{
       lost = true;
@@ -241,12 +264,17 @@ void loop(){
         action ++;
         //Serial.println("Performed :");
         //Serial.println(2);
+        lcd.clear();
+        lcd.print("Last action :");
+        lcd.setCursor(0,1);
+        lcd.print("Button");
       }
-      //waiting = false;
+      previousTime = currentTime;
+      currentTime = millis();
     }
         else{
           lost = true;
-          //Serial.println(lost);
+          //Serial.println("lost bouton");
         }
         pressed = true;
     }
@@ -268,12 +296,22 @@ void loop(){
         //Serial.println("Performed :");
         //Serial.println(3);
         delay(500);
+        lcd.clear();
+        lcd.print("Last action :");
+        lcd.setCursor(0,1);
+        lcd.print("Light");
       }
-      //waiting = false;
+      previousTime = currentTime;
+      currentTime = millis();
     }
         else{
           lost = true;
-          //Serial.println(lost);
+          //Serial.println("lost light sensor");
         }
+  }
+  currentTime = millis();
+  if(currentTime - previousTime >= eventInterval){
+    //Serial.println("lost time");
+    lost = true;
   }
 }
