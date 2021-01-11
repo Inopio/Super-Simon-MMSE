@@ -38,7 +38,7 @@ serie = serial.Serial('COM3',9600)
 lost = False
 
 while loop:
-    clock.tick(100)
+    #clock.tick(100)
     
     #if(player_counter == 4):
         #loop = False
@@ -87,6 +87,22 @@ while loop:
         print("Connection closed")
         break
 
+    ###### Serial COM ####
+    try:
+        data = serie.readline().decode()
+        print(data)
+        data = data.strip()
+        if(str(data) == "Perdu"):
+            print("vrai")
+            lost = True
+        elif (str(data) == "Pas perdu"):
+            print("faux")
+            lost = False
+    except:
+        print("No data sent")
+
+    print(lost)
+
     #police d'écriture
     if(click == True):
         if(lost == True):
@@ -97,17 +113,6 @@ while loop:
         label = myfont.render("Join Game", 1, YELLOW)
 
     screen.blit(label, rect_green)
-
-    ###### Serial COM ####
-    try:
-        data = serie.readline().decode()
-        #print(data)
-        if(data == "Perdu"):
-            lost = True
-        elif (data == "Pas perdu"):
-            lost = False
-    except:
-        print("No data sent")
      
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
