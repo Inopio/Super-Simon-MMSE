@@ -1,5 +1,5 @@
 import socket
-#import pyserial
+import serial
 import pygame
     
 pygame.init()
@@ -30,9 +30,12 @@ myNb = 0
 myfont = pygame.font.SysFont("Comic Sans MS", 30)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('127.0.0.1', 2001))
+s.connect(('192.168.1.38', 2356))
 clock = pygame.time.Clock()
 #sent = False
+
+serie = serial.Serial('COM3',9600)
+lost = False
 
 while loop:
     clock.tick(100)
@@ -51,8 +54,11 @@ while loop:
         mouse_xy = pygame.mouse.get_pos()
         over_button = rect_green.collidepoint(mouse_xy)
 
-    ###### NETWORK PART #######      
-    s.send(str.encode("game"))
+    ###### NETWORK PART #######
+    if(lost == True):
+        s.send(str.encode("perdu"))
+    else:
+        s.send(str.encode("game"))
     try:
         data = s.recv(2048).decode()
         if not data :
@@ -63,6 +69,10 @@ while loop:
             #print(data)
             if(data == "good"):
                 print("WOUHOU!")
+
+            elif(data == "perdu"):
+                lost = True
+                print("received lost :(") 
 
             elif(data.isnumeric()):
                 myNb  = int(data)
@@ -83,7 +93,19 @@ while loop:
     else:
         label = myfont.render("Join Game", 1, YELLOW)
 
-    screen.blit(label, rect_green) 
+    screen.blit(label, rect_green)
+
+    ###### Serial COM ####
+    try:
+        data = serie.readline().decode()
+        #print(data)
+        if(data == "Perdu"):
+            lost = True
+        elif (data == "Pas perdu"):
+            lost = False
+    except:
+        print("No data sent")
+     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
                 loop = False
