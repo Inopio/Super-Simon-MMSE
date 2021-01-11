@@ -38,10 +38,6 @@ serie = serial.Serial('COM3',9600)
 lost = False
 
 while loop:
-    #clock.tick(100)
-    
-    #if(player_counter == 4):
-        #loop = False
     background = pygame.Surface(screen.get_size())
     background.fill(ORANGE)
 
