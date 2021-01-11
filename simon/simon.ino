@@ -14,8 +14,8 @@ const int servo = 8;
 //////////////////////
 const int length = 10;
 
-//0 = ultrason, 1 = interrupteur, 2 = bouton poussoir, 3 = capteur de lumière
-int player[] = {0,1,2,3};
+//1 = ultrason, 2 = interrupteur, 3 = bouton poussoir, 4 = capteur de lumière
+int player[] = {1,2,3,4};
 
 //positions sur le demi cadran
 int pos[] = {22,67,112,157};
@@ -103,7 +103,7 @@ void setup() {
     while(ran == previous){
       ran = random(4);
     }
-    order[i] = ran;
+    order[i] = player[ran];
     dir[i] = pos[ran];
     previous = ran;
   }
@@ -112,6 +112,12 @@ void setup() {
   
 
 void loop(){
+  if(lost == false){
+    Serial.println("Pas perdu");
+  }
+  else{
+    Serial.println("Perdu");
+  }
 
   //Servo
   //Si on n'a pas perdu ou fini la séquence complète et que le tour précédent est terminé
@@ -161,7 +167,7 @@ void loop(){
     lcd.setCursor(0,1);
     lcd.print("Score ");
     lcd.print(streak);
-    Serial.println(lost);
+    //Serial.println(lost);
   }  
   //fin servo
   
@@ -179,7 +185,7 @@ void loop(){
   //Serial.print("distance = ");
   //Serial.println(distance);
   if(distance < 5 && !played){ //action
-    if (order[action] == 0){
+    if (order[action] == 1){
       if(action == streak){
         streak ++;
         //Serial.println("Performed :");
@@ -214,7 +220,7 @@ void loop(){
   if( state == 0 && !closed && !played){
     //Serial.println("Close");
     closed = true;
-    if (order[action] == 1){
+    if (order[action] == 2){
       if(action == streak){
         streak ++;
         //Serial.println("Performed :");
@@ -253,7 +259,7 @@ void loop(){
        pressed = false;
     }
     else if (!pressed && buttonState == HIGH) {
-        if (order[action] == 2){
+        if (order[action] == 3){
       if(action == streak){
         streak ++;
         //Serial.println("Performed :");
@@ -282,8 +288,8 @@ void loop(){
 
   //capteur de lumière
   photocellReading = analogRead(photocellPin);   
-  if (photocellReading < 300) {
-    if (order[action] == 3){
+  if (photocellReading < 400) {
+    if (order[action] == 4){
       if(action == streak){
         streak ++;
         //Serial.println("Performed :");
