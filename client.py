@@ -51,8 +51,8 @@ while loop:
         rect_green = pygame.draw.rect(screen, rect_color, [250, 15, 125, 50])
 
     # retourne 1 si le curseur est au dessus du rectangle
-        mouse_xy = pygame.mouse.get_pos()
-        over_button = rect_green.collidepoint(mouse_xy)
+    mouse_xy = pygame.mouse.get_pos()
+    over_button = rect_green.collidepoint(mouse_xy)
 
     ###### NETWORK PART #######
     if(lost == True):
@@ -89,7 +89,10 @@ while loop:
 
     #police d'écriture
     if(click == True):
-        label = myfont.render(player_number, 1, player_color)
+        if(lost == True):
+            label = myfont.render("Game Lost ! Try Again !", 1, YELLOW)
+        else:
+            label = myfont.render(player_number, 1, player_color)
     else:
         label = myfont.render("Join Game", 1, YELLOW)
 
@@ -108,7 +111,7 @@ while loop:
      
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-                loop = False
+            loop = False
         elif event.type == pygame.MOUSEBUTTONDOWN and over_button:
             click = True
             rect_color = WHITE
