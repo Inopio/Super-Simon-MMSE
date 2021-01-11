@@ -3,7 +3,7 @@ from _thread import *
 
 nbPlayer = 0
 running = True
-
+playerList = []
 def threadClient(ip, port, socket):
     global running
     global nbPlayer
@@ -20,16 +20,20 @@ def threadClient(ip, port, socket):
             print("Connection from : %s %s" % (ip, port, ))
             print("Received : ", resp)
             if resp == "game":
-                #running = True
-                data = str(nbPlayer)
+                for i in range (len(playerList)):
+                    if(playerList[i] == port):
+                        myNb = i
+                data = str(myNb)
                 data = str.encode(data)  
                 socket.send(data)
+            else:
+                socket.send(str.encode("Connection maintain"))
 
             if(nbPlayer >= 4) :
                 running = True
                 data = "good"
                 socket.send(str.encode(data))
-
+            
         except:
             break
 
@@ -52,6 +56,7 @@ if __name__ == "__main__":
         nbPlayer = nbPlayer + 1
         print( "next")
 
+        playerList.append(port)
 
         if nbPlayer < 4 :
             print("Waiting for at least two players...")

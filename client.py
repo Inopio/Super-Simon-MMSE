@@ -1,5 +1,5 @@
 import socket
-import pyserial
+#import pyserial
 import pygame
     
 pygame.init()
@@ -31,8 +31,27 @@ myfont = pygame.font.SysFont("Comic Sans MS", 30)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(('127.0.0.1', 2001))
+clock = pygame.time.Clock()
+#sent = False
+
 while loop:
-    ###### NETWORK PART #######       
+    clock.tick(100)
+    
+    #if(player_counter == 4):
+        #loop = False
+    background = pygame.Surface(screen.get_size())
+    background.fill(ORANGE)
+
+    # Ajout du fond dans la fenêtre
+    screen.blit(background, (0, 0))
+    if(rect == True):
+        rect_green = pygame.draw.rect(screen, rect_color, [250, 15, 125, 50])
+
+    # retourne 1 si le curseur est au dessus du rectangle
+        mouse_xy = pygame.mouse.get_pos()
+        over_button = rect_green.collidepoint(mouse_xy)
+
+    ###### NETWORK PART #######      
     s.send(str.encode("game"))
     try:
         data = s.recv(2048).decode()
@@ -46,30 +65,17 @@ while loop:
                 print("WOUHOU!")
 
             elif(data.isnumeric()):
-                myNb  = int(data) - 1
+                myNb  = int(data)
                 receivedMyNb = True
                 player_number = player_list[myNb]
                 player_color = player_color_list[myNb]
+                #sent = True
 
             else:
                 print("")
     except:
         print("Connection closed")
         break
-
-    if(player_counter == 4):
-        loop = False
-    background = pygame.Surface(screen.get_size())
-    background.fill(ORANGE)
-
-    # Ajout du fond dans la fenêtre
-    screen.blit(background, (0, 0))
-    if(rect == True):
-        rect_green = pygame.draw.rect(screen, rect_color, [250, 15, 125, 50])
-
-    # retourne 1 si le curseur est au dessus du rectangle
-        mouse_xy = pygame.mouse.get_pos()
-        over_button = rect_green.collidepoint(mouse_xy)
 
     #police d'écriture
     if(click == True):
