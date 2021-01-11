@@ -18,5 +18,6 @@ Lorsqu'on lance le jeu une fenêtre apparaît.Avant qu'une partie commence le jo
 
 Dans un premier temps un servomoteur choisi une séquence aléatoire à jouer en pointant sur la couleur du joueur qui doit effectuer l'action.
 Les joueurs doivent répéter la séquence qui a été créée par le servomoteur avec les actions qui leur ont été attribuées.
+Chacune des actions doit être effectuée dans un délai de 10 secondes sinon le coup est considéré comme mauvais.
 
 Un écran LCD affiche un message pour commencer le jeu. Durant la partie le score est affiché sur cet écran et à la fin de la partie un message nous indique si on a gagné ou perdu.
